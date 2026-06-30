@@ -3,36 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 NBA Valuation Model by Tuostmm</title>
+    <title>2026 NBA Valuation Model</title>
     
-    <!-- Bootstrap 5 & DataTables CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
     <style>
-        /* 黑 + 灰粉 配色体系 (Black & Muted Pink Theme) */
+        /* 真正的纯深灰配色体系 (True Dark Gray Theme) */
         :root {
-            --bg-body: #050505;        /* 极暗背景 */
-            --bg-surface: #121212;     /* 表格容器底色 */
-            --header-bg: #1a1a1a;      /* 表头深灰 */
-            --row-odd: #141414;        /* 单数行 */
-            --row-even: #0a0a0a;       /* 双数行 */
-            --hover-bg: #2a1e22;       /* 行 Hover 色 */
+            --bg-body: #0f0f0f;        /* 极深灰，替代纯黑 */
+            --bg-surface: #181818;     /* 表格容器背景灰 */
+            --header-bg: #262626;      /* 表头中灰 */
+            --row-odd: #1e1e1e;        /* 单数行深灰 */
+            --row-even: #151515;       /* 双数行深灰 */
+            --hover-bg: #333333;       /* Hover状态亮灰 */
             
-            --accent-pink: #c98ca0;    /* 柔和的干枯玫瑰粉 */
-            --accent-pink-dim: #8a5a6a;/* 暗粉色 (用于边框) */
-            
-            --text-title: #ffffff;     /* 标题纯白 */
-            --text-main: #d4d4d4;      /* 数据主文字 */
-            --text-muted: #808080;     /* 描述/注脚文字 */
-            --border-color: #2a2a2a;   /* 基础边框灰 */
+            --text-title: #eeeeee;     /* 标题柔和白 */
+            --text-main: #cccccc;      /* 数据主文字：浅灰（绝不刺眼） */
+            --text-muted: #8c8c8c;     /* 描述文字：中灰 */
+            --border-color: #383838;   /* 边框灰 */
         }
 
         body { 
             background-color: var(--bg-body); 
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            padding: 0 20px 40px 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center; 
@@ -40,144 +36,141 @@
 
         .main-container {
             width: 100%;
-            max-width: 1150px; 
+            max-width: 1100px; 
             margin: 0 auto;
         }
 
         .header-section {
-            margin-top: 80px; 
-            margin-bottom: 45px; 
             text-align: center;
+            margin-bottom: 35px; 
         }
 
         h2 { 
             color: var(--text-title); 
             font-weight: 700; 
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            letter-spacing: -0.5px;
-        }
-
-        .author-name {
-            color: var(--accent-pink);
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
         }
         
         .methodology-summary {
             background-color: var(--bg-surface);
-            border-top: 1px solid var(--accent-pink-dim);
-            border-bottom: 1px solid var(--accent-pink-dim);
-            padding: 20px 30px; 
+            border-top: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            padding: 20px 25px; 
             font-size: 0.9rem;
             color: var(--text-muted);
             line-height: 1.6;
             text-align: justify;
-            margin: 0 auto;
-            max-width: 950px;
+            margin: 0 auto 30px auto;
         }
 
         .methodology-summary code {
-            color: var(--accent-pink);
-            background: rgba(201, 140, 160, 0.1);
+            color: var(--text-main);
+            background: #2a2a2a;
             padding: 2px 6px;
             border-radius: 3px;
             font-family: inherit;
         }
 
-        /* 表格容器 */
+        /* 覆盖 Bootstrap 的 table 默认变量 */
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--text-main);
+            --bs-table-striped-bg: transparent;
+            --bs-table-hover-bg: transparent;
+        }
+
         .table-container {
             background-color: var(--bg-surface);
-            border-radius: 6px;
+            border-radius: 4px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             overflow: hidden;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             width: 100%;
         }
 
         table.dataTable { 
             font-size: 0.8rem;
-            margin: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
             width: 100% !important;
             border-collapse: collapse !important;
         }
         
         table.dataTable thead th, table.dataTable tbody td {
-            padding: 10px 14px !important;
+            padding: 8px 12px !important;
             vertical-align: middle;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             border-bottom: 1px solid var(--border-color) !important;
         }
 
+        /* 强制覆写表头背景和字体 */
         table.dataTable thead th {
             background-color: var(--header-bg) !important;
-            color: var(--accent-pink) !important;
+            color: var(--text-title) !important;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-size: 0.75rem;
         }
 
-        table.dataTable tbody tr:nth-of-type(odd) td { background-color: var(--row-odd) !important; }
-        table.dataTable tbody tr:nth-of-type(even) td { background-color: var(--row-even) !important; }
-        table.dataTable tbody tr:hover td { background-color: var(--hover-bg) !important; color: #ffffff !important; }
+        /* 强制覆写每一行的交替灰色背景 */
+        table.dataTable tbody tr:nth-of-type(odd) td { background-color: var(--row-odd) !important; color: var(--text-main) !important; }
+        table.dataTable tbody tr:nth-of-type(even) td { background-color: var(--row-even) !important; color: var(--text-main) !important; }
+        
+        /* 强制覆写 Hover 效果 */
+        table.dataTable tbody tr:hover td { 
+            background-color: var(--hover-bg) !important; 
+            color: #ffffff !important; 
+        }
 
-        .dataTables_wrapper { padding: 15px 20px; }
+        .dataTables_wrapper { padding: 15px; }
         .dataTables_wrapper .dataTables_length select,
         .dataTables_wrapper .dataTables_filter input {
             background-color: var(--bg-body);
             border: 1px solid var(--border-color);
-            color: var(--text-title);
+            color: var(--text-main);
             border-radius: 4px;
-            padding: 5px 12px;
+            padding: 5px 10px;
             font-size: 0.8rem;
         }
-        
+        .dataTables_wrapper .dataTables_filter { margin-bottom: 10px; }
+
         .column-filter {
             display: block;
-            margin-top: 8px;
+            margin-top: 6px;
             width: 100%;
             background-color: var(--bg-body);
             color: var(--text-main);
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 0.75rem;
-            padding: 4px;
+            padding: 3px;
         }
+        .column-filter:focus { outline: none; border-color: var(--text-title); }
 
         .btn-action {
-            padding: 4px 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border-radius: 4px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 3px;
+            border: 1px solid var(--border-color);
+            background: #2a2a2a;
+            color: var(--text-main);
+            transition: all 0.2s;
             cursor: pointer;
-            text-transform: uppercase;
         }
-        .btn-add { background: transparent; color: var(--accent-pink); border: 1px solid var(--accent-pink-dim); }
-        .btn-add:hover { background: rgba(201, 140, 160, 0.15); border-color: var(--accent-pink); color: #ffffff; }
-        .btn-remove { background: #1a1a1a; color: #666666; border: 1px solid #333333; }
+        .btn-add:hover { background: #404040; border-color: #555555; color: #ffffff; }
         
+        .btn-remove { background: #331f1f; color: #d68787; border-color: #4a2d2d; }
+        .btn-remove:hover { background: #472929; color: #ffaaaa; }
+
         .comparison-title {
-            font-size: 1.1rem; 
-            margin-bottom: 20px;
+            font-size: 1.25rem; 
+            margin-bottom: 15px;
             font-weight: 600;
             text-align: center;
             color: var(--text-title);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* Footer Credit */
-        .footer-credit {
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 20px;
-            letter-spacing: 0.5px;
         }
     </style>
 </head>
@@ -187,10 +180,9 @@
         
         <div class="header-section">
             <h2>2026 Free Agent Valuation Model</h2>
-            <div class="author-name">by Tuostmm</div>
             
             <div class="methodology-summary">
-                The NBA Free Agent Valuation Model is an open-source tool that predicts a player's market value (<code>cap_pct</code>) using an XGBoost regressor. Trained strictly on first-year contract data to capture genuine market signals, the model leverages 14 engineered features—including prior-season advanced metrics like DARKO DPM, LEBRON, and RAPM, alongside physical attributes and contract history. This one-year lagged approach mimics real front-office evaluations to generate objective salary projections and identify market inefficiencies.
+                This is a tool that predicts a player's market value (<code>cap_pct</code>) using an XGBoost regressor trained signing data to capture market prices. Used 14 engineered features including advanced metrics, physical attributes and contract history. This model is designed to reflect the value of a player if they were to sign a new contract without any CBA rules. This model is still under development, is not perfect and tend to underestimate super stars.
             </div>
         </div>
 
@@ -202,7 +194,7 @@
 
         <div id="comparisonSection">
             <div class="comparison-title">
-                <span>—</span> Player Comparison <span>—</span>
+                <span style="color: var(--border-color);">—</span> Player Comparison <span style="color: var(--border-color);">—</span>
             </div>
             
             <div class="table-container">
@@ -212,14 +204,8 @@
             </div>
         </div>
         
-        <!-- Footer Credit -->
-        <div class="footer-credit">
-            Credit: nbarapm.com, basketball-reference.com, Spotrac.com | Built with Claude Opus 4.6 on Claude Code
-        </div>
-        
     </div>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
