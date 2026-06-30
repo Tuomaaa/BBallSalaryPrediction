@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Player Predictions Dashboard</title>
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; }
+        h2 { color: #333; }
+        /* 稍微优化一下表格的显示 */
+        #dataTable { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>2026 Player Salary & Advanced Stats Predictions</h2>
+    <p>Data loads automatically from the static CSV file.</p>
+
+    <table id="dataTable" class="display" style="width:100%"></table>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // 使用 PapaParse 加载和解析本地/同目录的 CSV 文件
+            Papa.parse("predictions_2026.csv", {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const data = results.data;
+                    
+                    // 动态提取 CSV 的 Header 作为 DataTables 的 columns
+                    if (data.length === 0) return;
+                    const columns = Object.keys(data[0]).map(function(key) {
+                        return { title: key, data: key };
+                    });
+
+                    // 初始化 DataTable
+                    $('#dataTable').DataTable({
+                        data: data,
+                        columns: columns,
+                        pageLength: 25,          // 默认每页显示 25 条
+                        scrollX: true,           // 当 column 太多时允许横向滚动
+                        order: [[ 11, "desc" ]], // 默认按照 darko_dpm (第12列) 降序排列 (可根据需要修改)
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
