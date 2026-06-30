@@ -3,155 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 Player Predictions Pro Dashboard</title>
+    <title>2026 NBA Valuation Model</title>
     
-    <!-- 引入 DataTables 和 Bootstrap 5 以获得更专业的 UI component -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
     <style>
-        /* 专业 Stats Site 的 Dark Theme */
+        /* 柔和的莫兰迪蓝灰暗色系 (Slate Dark Theme) */
         :root {
-            --bg-color: #121212;
-            --surface-color: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #9e9e9e;
-            --accent-color: #00bcd4;
-            --border-color: #333333;
+            --bg-color: #0f172a;       /* Slate 900 - 主背景 */
+            --surface-color: #1e293b;  /* Slate 800 - 面板背景 */
+            --text-main: #e2e8f0;      /* Slate 200 - 主文字 */
+            --text-muted: #94a3b8;     /* Slate 400 - 次要文字 */
+            --accent-color: #38bdf8;   /* Sky 400 - 点缀色 */
+            --border-color: #334155;   /* Slate 700 - 柔和边框 */
+            --hover-bg: #27364b;       /* Hover 状态色 */
         }
 
         body { 
             background-color: var(--bg-color); 
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding: 20px 40px;
+            padding: 2rem;
         }
 
-        h2, h4 { color: #ffffff; font-weight: 600; }
-        .text-muted-custom { color: var(--text-muted); font-size: 0.9rem; }
+        h2, h4 { color: #f8fafc; font-weight: 600; letter-spacing: -0.5px; }
+        
+        /* 简介段落样式 */
+        .methodology-summary {
+            background-color: var(--surface-color);
+            border-left: 3px solid var(--accent-color);
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            max-width: 1000px;
+        }
 
-        /* 表格 UI 优化 */
+        .methodology-summary code {
+            color: var(--accent-color);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* 紧凑型表格 UI (Compact Table) */
         .table-container {
             background-color: var(--surface-color);
-            padding: 20px;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
-            margin-top: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
 
         table.dataTable { 
-            font-size: 0.85rem; 
-            color: var(--text-main) !important;
+            font-size: 0.75rem; /* 缩小字体 */
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            border-collapse: collapse !important;
         }
         
-        /* 针对 Header 的样式 */
+        /* 压缩 Padding */
+        table.dataTable thead th, table.dataTable tbody td {
+            padding: 6px 10px !important;
+            vertical-align: middle;
+        }
+
         table.dataTable thead th {
-            border-bottom: 2px solid var(--border-color) !important;
-            color: #ffffff;
+            background-color: #172033;
+            border-bottom: 1px solid var(--border-color) !important;
+            color: #cbd5e1;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.75rem;
             letter-spacing: 0.5px;
+            font-size: 0.7rem;
         }
 
-        /* 针对 Data Row 的样式 */
         table.dataTable tbody td {
             border-bottom: 1px solid var(--border-color) !important;
-            vertical-align: middle;
-            /* 数值使用等宽字体，对齐更好看 */
-            font-family: "JetBrains Mono", "Courier New", Courier, monospace; 
+            font-family: "JetBrains Mono", "SF Mono", "Courier New", Courier, monospace;
+            color: var(--text-main);
         }
 
-        /* 覆盖 Bootstrap 的表格 hover 背景色 */
-        .table-striped>tbody>tr:nth-of-type(odd)>* { background-color: rgba(255, 255, 255, 0.02); color: var(--text-main); }
-        .table-hover>tbody>tr:hover>* { background-color: rgba(0, 188, 212, 0.1); color: #ffffff; }
+        /* 柔和的 Hover 效果 */
+        .table-striped>tbody>tr:nth-of-type(odd)>* { background-color: transparent; }
+        .table-hover>tbody>tr:hover>* { background-color: var(--hover-bg); color: #ffffff; }
 
-        /* Pagination & Search 输入框 UI */
+        /* 搜索框与分页控件样式调整 */
+        .dataTables_wrapper { padding: 12px; }
         .dataTables_wrapper .dataTables_length select,
         .dataTables_wrapper .dataTables_filter input {
-            background-color: #2c2c2c;
+            background-color: var(--bg-color);
             border: 1px solid var(--border-color);
-            color: white;
+            color: var(--text-main);
             border-radius: 4px;
             padding: 4px 8px;
+            font-size: 0.8rem;
         }
 
-        /* Dropdown filter 样式 */
+        /* 下拉筛选器 */
         .column-filter {
             display: block;
-            margin-top: 8px;
+            margin-top: 4px;
             width: 100%;
-            background-color: #2c2c2c;
-            color: white;
-            border: 1px solid #444;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-size: 0.7rem;
             padding: 2px;
         }
+        .column-filter:focus { outline: none; border-color: var(--accent-color); }
 
-        /* Action Buttons */
+        /* 低饱和度 Action Buttons */
         .btn-action {
             padding: 2px 8px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 4px;
-            border: none;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            background: transparent;
             transition: all 0.2s;
+            cursor: pointer;
         }
-        .btn-add { background-color: #2e7d32; color: white; }
-        .btn-add:hover { background-color: #1b5e20; color: white; }
-        .btn-remove { background-color: #d32f2f; color: white; }
-        .btn-remove:hover { background-color: #b71c1c; color: white; }
+        .btn-add { 
+            color: #4ade80; 
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+        .btn-add:hover { background: rgba(74, 222, 128, 0.1); }
+        
+        .btn-remove { 
+            color: #f87171; 
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+        .btn-remove:hover { background: rgba(248, 113, 113, 0.1); }
 
         /* Comparison Section */
         #comparisonSection {
-            margin-top: 40px;
-            border-top: 2px dashed var(--border-color);
-            padding-top: 30px;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
-    <div class="d-flex justify-content-between align-items-end mb-4">
-        <div>
-            <h2>2026 Advanced Analytics & Predictions</h2>
-            <p class="text-muted-custom mb-0">Interactive player dashboard. Search, filter, and add players to the comparison table below.</p>
+    <div>
+        <h2>2026 Free Agent Valuation Model</h2>
+        
+        <div class="methodology-summary">
+            The NBA Free Agent Valuation Model is an open-source tool that predicts a player's market value (<code>cap_pct</code>) using an XGBoost regressor. Trained strictly on first-year contract data to capture genuine market signals, the model leverages 14 engineered features—including prior-season advanced metrics like DARKO DPM, LEBRON, and RAPM, alongside physical attributes and contract history. This one-year lagged approach mimics real front-office evaluations to generate objective salary projections and identify market inefficiencies.
         </div>
     </div>
 
-    <!-- Main Data Table -->
     <div class="table-container">
         <table id="mainTable" class="table table-striped table-hover nowrap" style="width:100%">
             <thead><tr id="main-header-row"></tr></thead>
         </table>
     </div>
 
-    <!-- Comparison Section -->
     <div id="comparisonSection">
-        <h4><span style="color: var(--accent-color);">|</span> Player Comparison</h4>
-        <p class="text-muted-custom">Selected players will appear here for side-by-side analysis.</p>
+        <h4 style="font-size: 1.1rem; margin-bottom: 12px;"><span style="color: var(--accent-color);">|</span> Player Comparison</h4>
         
-        <div class="table-container">
+        <div class="table-container" style="padding-bottom: 0;">
             <table id="compareTable" class="table table-striped table-hover nowrap" style="width:100%">
                 <thead><tr id="compare-header-row"></tr></thead>
             </table>
         </div>
     </div>
 
-    <!-- Libraries -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <!-- DataTables Core & Bootstrap Integration -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         let mainDataTable;
         let compareDataTable;
-        let compareSet = new Set(); // 记录已经加入 comparison 的 player ID (假设用 player_name 作为 unique key)
+        let compareSet = new Set(); 
 
         $(document).ready(function() {
             Papa.parse("predictions_2026.csv", {
@@ -162,19 +191,17 @@
                     const data = results.data;
                     if (data.length === 0) return;
 
-                    // 1. 生成 Column Definitions
                     const columns = Object.keys(data[0]).map(function(key) {
                         return { title: key, data: key };
                     });
 
-                    // 2. 往数组最前面 Unshift 一个 Action Column
+                    // Insert Action Column
                     columns.unshift({
                         title: "Action",
                         data: null,
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            // 使用行内的球员名字作为 ID
                             const playerId = row['player_name'] || row['Player'] || Object.values(row)[0];
                             const isAdded = compareSet.has(playerId);
                             if (isAdded) {
@@ -185,21 +212,19 @@
                         }
                     });
 
-                    // 3. Initialize Main DataTable
                     mainDataTable = $('#mainTable').DataTable({
                         data: data,
                         columns: columns,
                         pageLength: 15,
                         scrollX: true,
                         autoWidth: false,
-                        order: [[ 12, "desc" ]], // 排序 index 后移一位，因为加了 Action 列 (原为11，现为12)
+                        order: [[ 12, "desc" ]], 
                         
                         initComplete: function () {
                             this.api().columns().every(function () {
                                 let column = this;
                                 let title = column.header().textContent;
 
-                                // Filter categorical columns
                                 const filterableColumns = ['position', 'team_abbreviation'];
 
                                 if (filterableColumns.includes(title)) {
@@ -219,8 +244,6 @@
                         }
                     });
 
-                    // 4. Initialize Comparison DataTable
-                    // Comparison table 不需要 pagination 和全局 search
                     compareDataTable = $('#compareTable').DataTable({
                         data: [],
                         columns: columns,
@@ -230,44 +253,32 @@
                         scrollX: true,
                         autoWidth: false,
                         language: {
-                            emptyTable: "No players added to comparison yet."
+                            emptyTable: "Select 'Add' on any player above to compare stats."
                         }
                     });
                 }
             });
         });
 
-        // Add 逻辑
         function addToCompare(btn) {
-            // 获取当前行的数据
             let tr = $(btn).closest('tr');
             let rowData = mainDataTable.row(tr).data();
-            
-            // 假设 player_name 是 unique key，如果没有这个 column，请替换为 CSV 中实际的球员名字段
             const playerId = rowData['player_name'] || rowData['Player'] || Object.values(rowData)[0];
 
             if (!compareSet.has(playerId)) {
                 compareSet.add(playerId);
-                
-                // 将数据添加到底部的 comparison table 并重绘
                 compareDataTable.row.add(rowData).draw();
-                
-                // 重绘 main table 以更新按键状态 (Add -> Drop)
                 mainDataTable.row(tr).invalidate().draw(false);
             }
         }
 
-        // Remove 逻辑
         function removeFromCompare(playerId) {
             compareSet.delete(playerId);
-
-            // 从 Comparison Table 中找出这行并删除
             compareDataTable.rows(function(idx, data, node) {
                 let currentId = data['player_name'] || data['Player'] || Object.values(data)[0];
                 return currentId === playerId;
             }).remove().draw();
 
-            // 重绘 Main Table，让被删除球员的按键恢复为 Add
             mainDataTable.rows().every(function() {
                 let data = this.data();
                 let currentId = data['player_name'] || data['Player'] || Object.values(data)[0];
