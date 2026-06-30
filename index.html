@@ -201,7 +201,20 @@
             border-color: var(--border-color) !important;
             color: var(--text-muted) !important;
         }
-        
+        .dataTables_scrollBody::-webkit-scrollbar {
+            height: 8px;            /* 横向滚动条高度 */
+            background-color: var(--bg-body);
+        }
+        .dataTables_scrollBody::-webkit-scrollbar-thumb {
+            background-color: var(--accent-pink-dim);
+            border-radius: 4px;
+        }
+        .dataTables_scrollBody::-webkit-scrollbar-thumb:hover {
+            background-color: var(--accent-pink);
+        }
+        .dataTables_scrollBody::-webkit-scrollbar-track {
+            background-color: var(--bg-surface);
+        }
         .column-filter {
             display: block;
             margin-top: 8px;
@@ -244,6 +257,15 @@
             margin-top: 20px;
             letter-spacing: 0.5px;
         }
+
+        /* 版本号 */
+        .version-info {
+            text-align: center;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
     </style>
 </head>
 <body>
@@ -281,6 +303,9 @@
         <div class="footer-credit">
             Credit: nbarapm.com | basketball-reference.com | Spotrac.com, Built with Claude Opus 4.6 on Claude Code
         </div>
+        
+        <!-- 版本号 v1.2 -->
+        <div class="version-info">v1.3</div>
         
     </div>
 
@@ -337,8 +362,8 @@
                             this.api().columns().every(function () {
                                 let column = this;
                                 let title = column.header().textContent;
-                                // 新增 IS_FA 到可筛选列
-                                const filterableColumns = ['position', 'team_abbreviation', 'IS_FA'];
+                                // 包含 IS_FA
+                                const filterableColumns = ['Pos', 'Team', 'is_FA'];
 
                                 if (filterableColumns.includes(title)) {
                                     let select = $('<select class="column-filter"><option value="">All</option></select>')
@@ -376,7 +401,7 @@
         function addToCompare(btn) {
             let tr = $(btn).closest('tr');
             let rowData = mainDataTable.row(tr).data();
-            const playerId = rowData['player_name'] || rowData['Player'] || Object.values(row)[0];
+            const playerId = rowData['player_name'] || rowData['Player'] || Object.values(rowData)[0];
 
             if (!compareSet.has(playerId)) {
                 compareSet.add(playerId);
