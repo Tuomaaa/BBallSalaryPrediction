@@ -1,4 +1,4 @@
-Player,Age,Team,Pos,CapPct_Pred, Salary_Pred , Salary_Actual , Salary_Diff ,DARKO,LEBRON,RAPM,Minutes,usg,is_FA
+Player,Age,Team,Pos,Cap_Pred, Salary_Pred , Salary_Actual , Salary_Diff ,DARKO,LEBRON,RAPM,Minutes,usg,is_FA
 Luka Doncic,26,LAL,PG,33.5%," $51,226,972.00 "," $49,800,000.00 "," $1,426,972.00 ",4.46,5.20277373,5.571,2289,38.1,FALSE
 Shai Gilgeous-Alexander,27,OKC,PG,32.9%," $50,385,412.00 "," $40,806,150.00 "," $9,579,262.00 ",5.62,6.226180976,9.654,2259,33.4,FALSE
 Nikola Jokic,30,DEN,C,32.7%," $49,955,776.00 "," $59,033,114.00 "," $(9,077,338.00)",7.03,6.797957959,9.496,2265,30.4,FALSE

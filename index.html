@@ -40,26 +40,26 @@
 
         .main-container {
             width: 100%;
-            max-width: 1150px; 
+            max-width: 1350px;
             margin: 0 auto;
         }
 
         .header-section {
-            margin-top: 180px;          /* 增大顶部空档 (原 80px) */
-            margin-bottom: 70px; 
+            margin-top: 100px;
+            margin-bottom: 45px; 
             text-align: center;
         }
 
         h2 { 
-            color: var(--accent-pink);
+            color: var(--text-title); 
             font-weight: 700; 
-            font-size: 3.5rem;           /* 标题字号增大 (原 2.5rem) */
+            font-size: 3rem;
             margin-bottom: 5px;
             letter-spacing: -0.5px;
         }
 
         .author-name {
-            color: var(--text-title); 
+            color: var(--accent-pink);
             font-size: 1.1rem;
             font-weight: 500;
             margin-bottom: 25px;
@@ -122,10 +122,8 @@
             font-size: 0.75rem;
         }
 
-        /* 表格默认字色改为白色 */
         table.dataTable tbody tr:nth-of-type(odd) td { background-color: var(--row-odd) !important; color: #ffffff !important; }
         table.dataTable tbody tr:nth-of-type(even) td { background-color: var(--row-even) !important; color: #ffffff !important; }
-        /* 鼠标悬浮时字色变为粉色 */
         table.dataTable tbody tr:hover td { background-color: var(--hover-bg) !important; color: var(--accent-pink) !important; }
 
         .dataTables_wrapper { padding: 15px 20px; }
@@ -137,6 +135,71 @@
             border-radius: 4px;
             padding: 5px 12px;
             font-size: 0.8rem;
+        }
+        
+        /* 分页控件整体配色 */
+        .dataTables_wrapper .dataTables_length label {
+            color: var(--text-muted);
+        }
+        .dataTables_wrapper .dataTables_filter label {
+            color: var(--text-muted);
+        }
+        .dataTables_wrapper .dataTables_info {
+            color: var(--text-muted) !important;
+            padding-top: 0.85em;
+        }
+        
+        /* Bootstrap 5 分页按钮覆盖 */
+        .page-link {
+            background-color: var(--bg-body) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-main) !important;
+            transition: all 0.15s ease;
+        }
+        .page-link:hover {
+            background-color: var(--hover-bg) !important;
+            border-color: var(--accent-pink) !important;
+            color: #ffffff !important;
+        }
+        .page-item.active .page-link {
+            background-color: var(--accent-pink) !important;
+            border-color: var(--accent-pink) !important;
+            color: #050505 !important;
+            font-weight: 600;
+        }
+        .page-item.disabled .page-link {
+            background-color: var(--bg-surface) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-muted) !important;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        /* 针对 DataTables 原生 class 的额外保险 */
+        .dataTables_paginate .paginate_button {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+            margin-left: 2px;
+        }
+        .dataTables_paginate .paginate_button:hover {
+            background: var(--hover-bg) !important;
+            border-color: var(--accent-pink) !important;
+            color: #fff !important;
+        }
+        .dataTables_paginate .paginate_button.current {
+            background: var(--accent-pink) !important;
+            border-color: var(--accent-pink) !important;
+            color: #050505 !important;
+        }
+        .dataTables_paginate .paginate_button.disabled {
+            color: var(--text-muted) !important;
+            opacity: 0.4;
+        }
+        .dataTables_paginate .paginate_button.disabled:hover {
+            background: transparent !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-muted) !important;
         }
         
         .column-filter {
@@ -188,11 +251,11 @@
     <div class="main-container">
         
         <div class="header-section">
-            <h2>25-26 Player Market Value</h2>
+            <h2>2026 Free Agent Valuation Model</h2>
             <div class="author-name">by Tuostmm</div>
             
             <div class="methodology-summary">
-                This is a tool that predicts a player's market value (cap_pct) using an XGBoost regressor trained signing data to capture market prices. Used 14 engineered features including advanced metrics, physical attributes and contract history. This model is designed to reflect the value of a player if they were to sign a new contract without any CBA rules. This model is still under development, is not perfect and tend to underestimate super stars.
+                The NBA Free Agent Valuation Model is an open-source tool that predicts a player's market value (<code>cap_pct</code>) using an XGBoost regressor. Trained strictly on first-year contract data to capture genuine market signals, the model leverages 14 engineered features—including prior-season advanced metrics like DARKO DPM, LEBRON, and RAPM, alongside physical attributes and contract history. This one-year lagged approach mimics real front-office evaluations to generate objective salary projections and identify market inefficiencies.
             </div>
         </div>
 
@@ -274,7 +337,8 @@
                             this.api().columns().every(function () {
                                 let column = this;
                                 let title = column.header().textContent;
-                                const filterableColumns = ['position', 'team_abbreviation'];
+                                // 新增 IS_FA 到可筛选列
+                                const filterableColumns = ['position', 'team_abbreviation', 'IS_FA'];
 
                                 if (filterableColumns.includes(title)) {
                                     let select = $('<select class="column-filter"><option value="">All</option></select>')
@@ -312,7 +376,7 @@
         function addToCompare(btn) {
             let tr = $(btn).closest('tr');
             let rowData = mainDataTable.row(tr).data();
-            const playerId = rowData['player_name'] || rowData['Player'] || Object.values(rowData)[0];
+            const playerId = rowData['player_name'] || rowData['Player'] || Object.values(row)[0];
 
             if (!compareSet.has(playerId)) {
                 compareSet.add(playerId);
