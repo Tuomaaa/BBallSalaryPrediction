@@ -11,24 +11,24 @@
     <style>
         /* 真正的纯深灰配色体系 (True Dark Gray Theme) */
         :root {
-            --bg-body: #0f0f0f;        /* 极深灰，替代纯黑 */
-            --bg-surface: #181818;     /* 表格容器背景灰 */
-            --header-bg: #262626;      /* 表头中灰 */
-            --row-odd: #1e1e1e;        /* 单数行深灰 */
-            --row-even: #151515;       /* 双数行深灰 */
-            --hover-bg: #333333;       /* Hover状态亮灰 */
+            --bg-body: #0f0f0f;
+            --bg-surface: #181818;
+            --header-bg: #262626;
+            --row-odd: #1e1e1e;
+            --row-even: #151515;
+            --hover-bg: #333333;
             
-            --text-title: #eeeeee;     /* 标题柔和白 */
-            --text-main: #cccccc;      /* 数据主文字：浅灰（绝不刺眼） */
-            --text-muted: #8c8c8c;     /* 描述文字：中灰 */
-            --border-color: #383838;   /* 边框灰 */
+            --text-title: #eeeeee;
+            --text-main: #cccccc;
+            --text-muted: #8c8c8c;
+            --border-color: #383838;
         }
 
         body { 
             background-color: var(--bg-body); 
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            padding: 40px 20px;
+            padding: 60px 20px 40px 20px;  /* 顶部空档增大 */
             display: flex;
             flex-direction: column;
             align-items: center; 
@@ -42,14 +42,14 @@
 
         .header-section {
             text-align: center;
-            margin-bottom: 35px; 
+            margin-bottom: 50px;  /* 增大标题区域间距 */
         }
 
         h2 { 
             color: var(--text-title); 
             font-weight: 700; 
-            font-size: 2.2rem;
-            margin-bottom: 15px;
+            font-size: 3rem;      /* 大标题字号增大 */
+            margin-bottom: 20px;
         }
         
         .methodology-summary {
@@ -72,7 +72,6 @@
             font-family: inherit;
         }
 
-        /* 覆盖 Bootstrap 的 table 默认变量 */
         .table {
             --bs-table-bg: transparent;
             --bs-table-color: var(--text-main);
@@ -105,7 +104,6 @@
             border-bottom: 1px solid var(--border-color) !important;
         }
 
-        /* 强制覆写表头背景和字体 */
         table.dataTable thead th {
             background-color: var(--header-bg) !important;
             color: var(--text-title) !important;
@@ -114,14 +112,14 @@
             letter-spacing: 0.5px;
         }
 
-        /* 强制覆写每一行的交替灰色背景 */
-        table.dataTable tbody tr:nth-of-type(odd) td { background-color: var(--row-odd) !important; color: var(--text-main) !important; }
-        table.dataTable tbody tr:nth-of-type(even) td { background-color: var(--row-even) !important; color: var(--text-main) !important; }
+        /* 表格默认字色改为白色 */
+        table.dataTable tbody tr:nth-of-type(odd) td { background-color: var(--row-odd) !important; color: #ffffff !important; }
+        table.dataTable tbody tr:nth-of-type(even) td { background-color: var(--row-even) !important; color: #ffffff !important; }
         
-        /* 强制覆写 Hover 效果 */
+        /* Hover 时字色变为粉色 */
         table.dataTable tbody tr:hover td { 
             background-color: var(--hover-bg) !important; 
-            color: #ffffff !important; 
+            color: #ffb6c1 !important;   /* 浅粉色 */
         }
 
         .dataTables_wrapper { padding: 15px; }
@@ -172,6 +170,15 @@
             text-align: center;
             color: var(--text-title);
         }
+
+        /* 底部来源声明 */
+        .footer-credit {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 30px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +186,7 @@
     <div class="main-container">
         
         <div class="header-section">
-            <h2>2026 Free Agent Valuation Model</h2>
+            <h2>2025-2026 NBA Player Value Model</h2>
             
             <div class="methodology-summary">
                 This is a tool that predicts a player's market value (<code>cap_pct</code>) using an XGBoost regressor trained signing data to capture market prices. Used 14 engineered features including advanced metrics, physical attributes and contract history. This model is designed to reflect the value of a player if they were to sign a new contract without any CBA rules. This model is still under development, is not perfect and tend to underestimate super stars.
@@ -202,6 +209,11 @@
                     <thead><tr id="compare-header-row"></tr></thead>
                 </table>
             </div>
+        </div>
+        
+        <!-- 底部 Credit 行 -->
+        <div class="footer-credit">
+            Credit: nbarapm.com | basketball-reference.com | Spotrac.com<br>Built with Claude Opus 4.6 on Claude Code
         </div>
         
     </div>
